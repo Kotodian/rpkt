@@ -71,6 +71,7 @@ fn build_dpdk_ffi() {
         .allowlist_function("rte_ring_create")
         .allowlist_function("rte_ring_enqueue_burst")
         .allowlist_function("rte_ring_dequeue_burst")
+        .allowlist_function("rte_ring_free")
         // generate dpdk distributor
         .allowlist_function("rte_distributor_create")
         .allowlist_function("rte_distributor_process")

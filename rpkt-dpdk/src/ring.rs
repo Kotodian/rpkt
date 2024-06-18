@@ -116,28 +116,38 @@ impl Ring {
     }
 
     #[inline]
-    pub fn enqueue_burst<const N: usize>(&self, batch: &mut ArrayVec<Mbuf, N>) -> Result<()> {
-        unsafe {
-            let mbufs =
-                std::mem::transmute::<*mut Mbuf, *mut *mut ffi::rte_mbuf>(batch.as_mut_ptr());
+    pub unsafe fn enqueue_burst<const N: usize>(
+        &self,
+        batch: &mut ArrayVec<Mbuf, N>,
+    ) -> Result<()> {
+        let mbufs = std::mem::transmute::<*mut Mbuf, *mut *mut ffi::rte_mbuf>(batch.as_mut_ptr());
 
-            let result = ffi::rte_ring_enqueue_burst_(
-                self.ptr.as_ptr(),
-                mbufs as *const *mut c_void,
-                batch.len() as u32,
-                std::ptr::null_mut(),
-            );
-        };
-
+        let res = ffi::rte_ring_enqueue_burst_(
+            self.ptr.as_ptr(),
+            mbufs as *const *mut c_void,
+            batch.len() as u32,
+            std::ptr::null_mut(),
+        );
+        if res != 0 {
+            return Error::ffi_err(res as i32, "fail to enqueue burst").to_err();
+        }
         Ok(())
+    }
+
+    #[inline]
+    pub unsafe fn dequeue_burst<const N: usize>(&self) -> Result<&ArrayVec<Mbuf, N>> {
+        todo!()
     }
 
     pub fn as_ptr(&self) -> *const ffi::rte_ring {
         self.ptr.as_ptr()
     }
+}
 
-    #[inline]
-    pub fn dequeue_burst(&self) -> Result<&Mbuf> {
-        todo!()
+impl Drop for Ring {
+    fn drop(&mut self) {
+        unsafe {
+            ffi::rte_ring_free(self.ptr.as_ptr());
+        }
     }
 }
