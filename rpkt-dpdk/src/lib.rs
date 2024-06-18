@@ -36,3 +36,6 @@ pub use port::{
 pub mod offload;
 
 pub mod utils;
+
+mod ring;
+pub use ring::{RingConf, RingFlags};
