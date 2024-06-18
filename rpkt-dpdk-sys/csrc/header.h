@@ -1,7 +1,9 @@
 // Add dpdk headers.
 #define _GNU_SOURCE
 #include <rte_eal.h>
+#include <rte_ring.h>
 #include <rte_ethdev.h>
+#include <rte_distributor.h>
 
 // Add wrapper definitions for functions that bindgen can not generate.
 //
@@ -36,3 +38,13 @@ uint16_t rte_eth_tx_burst_(uint16_t port_id, uint16_t queue_id,
 						   struct rte_mbuf **tx_pkts, uint16_t nb_pkts);
 
 int rte_errno_();
+
+// ring
+unsigned int
+rte_ring_enqueue_burst_(struct rte_ring *r, void * const *obj_table,
+		      unsigned int n, unsigned int *free_space);
+
+unsigned int
+rte_ring_dequeue_burst_(struct rte_ring *r, void **obj_table,
+		unsigned int n, unsigned int *available);
+

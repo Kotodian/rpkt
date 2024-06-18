@@ -1,11 +1,11 @@
+use bindgen::Formatter;
 use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::str;
-use bindgen::Formatter;
 
-use version_compare::{Version};
+use version_compare::Version;
 
 const DPDK_PREFERRED_VERSION: &str = "23.11";
 const DPDK_GIT_REPO: &str = "https://dpdk.org/git/dpdk";
@@ -67,6 +67,14 @@ fn build_dpdk_ffi() {
         .allowlist_function("rte_eth_promiscuous_disable")
         .allowlist_function("rte_eal_init")
         .allowlist_function("rte_eal_cleanup")
+        // generate dpdk ring
+        .allowlist_function("rte_ring_enqueue_burst")
+        .allowlist_function("rte_ring_dequeue_burst")
+        // generate dpdk distributor
+        .allowlist_function("rte_distributor_process")
+        .allowlist_function("rte_distributor_returned_pkts")
+        .allowlist_function("rte_distributor_flush")
+        .allowlist_function("rte_distributor_clear_returns")
         // generate useful dpdk types
         .allowlist_type("rte_eth_conf")
         .allowlist_type("rte_eth_dev_info")
@@ -74,6 +82,10 @@ fn build_dpdk_ffi() {
         .allowlist_type("rte_mempool")
         .allowlist_type("rte_mbuf")
         .allowlist_type("rte_eth_stats")
+        // generate dpdk ring
+        .allowlist_type("rte_ring")
+        // generate dpdk distributor type
+        .allowlist_type("rte_distributor")
         // generate useful dpdk macros defined in rte_build_config.h.
         .allowlist_var("RTE_MAX_LCORE")
         .allowlist_var("RTE_MAX_NUMA_NODES")

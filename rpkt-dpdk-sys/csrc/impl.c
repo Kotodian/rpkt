@@ -45,3 +45,16 @@ int rte_errno_()
 {
     return rte_errno;
 }
+
+// ring
+unsigned int
+rte_ring_enqueue_burst_(struct rte_ring *r, void * const *obj_table,
+		      unsigned int n, unsigned int *free_space) {
+    return rte_ring_enqueue_burst(r, obj_table, n, free_space);
+}
+
+unsigned int
+rte_ring_dequeue_burst_(struct rte_ring *r, void **obj_table,
+		unsigned int n, unsigned int *available) {
+    return rte_ring_dequeue_burst(r, obj_table, n, available);
+}
